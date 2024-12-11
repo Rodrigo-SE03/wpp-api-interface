@@ -5,6 +5,15 @@ from utils.api_client import call_api
 def render():
     st.title("Contatos")
 
+    response = call_api("/contatos", method="GET")
+    contatos = []
+    setores = []
+    if response and isinstance(response, list):  # Verifica se a resposta é uma lista
+        if len(response) > 0:
+            for contato in response:
+                contatos.append(contato)
+                setores.append(contato['setor'])
+                
     option = st.selectbox("Escolha uma ação:", ["Ver Contatos", "Atualizar Contato", "Encerrar Conversa", "Adicionar Contato", "Remover Contato"])
     
     if option == "Ver Contatos":
@@ -22,10 +31,11 @@ def render():
                 st.error("Erro ao ver a fila.")
     
     elif option == 'Atualizar Contato':
-        setor  = st.text_input("Setor")
-        telefone_responsavel = st.text_input("Telefone do Responsável", placeholder='556298299370')
-        nome_responsavel = st.text_input("Nome do Responsável")
-        subtopicos = st.text_area("Subtópicos", placeholder="Subtópico1,Subtópico2,Subtópico3,Subtópico4")
+        #TODO - Separar os campos dos subtópicos
+        setor  = st.selectbox("Setor",setores)
+        telefone_responsavel = st.text_input("Telefone do Responsável", value=contatos[setores.index(setor)]['telefone_responsavel'])
+        nome_responsavel = st.text_input("Nome do Responsável", value=contatos[setores.index(setor)]['nome_responsavel'])
+        subtopicos = st.text_area("Subtópicos", placeholder="Subtópico 1,Subtópico 2,Subtópico 3,Subtópico 4", value=contatos[setores.index(setor)]['subtopicos'])
         data = {'setor': setor, 'telefone_responsavel': telefone_responsavel, 'nome_responsavel': nome_responsavel, 'subtopicos': subtopicos}
         if st.button("Atualizar Contato"):
             response = call_api(f"/contatos", method="PUT", data=data)
@@ -42,7 +52,7 @@ def render():
         setor  = st.text_input("Setor")
         telefone_responsavel = st.text_input("Telefone do Responsável", placeholder='556298299370')
         nome_responsavel = st.text_input("Nome do Responsável")
-        subtopicos = st.text_area("Subtópicos", placeholder="Subtópico1,Subtópico2,Subtópico3,Subtópico4")
+        subtopicos = st.text_area("Subtópicos", placeholder="Subtópico 1,Subtópico 2,Subtópico 3,Subtópico 4")
         data = {'setor': setor, 'telefone_responsavel': telefone_responsavel, 'nome_responsavel': nome_responsavel, 'subtopicos': subtopicos}
         if st.button("Adicionar Contato"):
             response = call_api(f"/contatos", method="POST", data=data)

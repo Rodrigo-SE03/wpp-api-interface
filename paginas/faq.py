@@ -24,15 +24,15 @@ def render():
     elif option == "Adicionar Item":
         pergunta = st.text_input("Pergunta")
         resposta = st.text_area("Resposta")
-        categoria = st.text_area("Categoria")
+        categoria = st.selectbox("Categoria", ["Mercado Livre de Energia","Geração de Energia"])
         if st.button("Adicionar FAQ"):
             data = {"pergunta": pergunta, "resposta": resposta, "categoria": categoria}
             response = call_api("/faq", method="POST", data=data)
             st.json(response)
     
     elif option == "Remover Item":
-        faq_id = st.text_input("ID do FAQ")
+        faq_id = st.text_input("ID do item")
         data = {'id': faq_id}
-        if st.button("Remover FAQ"):
+        if st.button("Remover item"):
             response = call_api(f"/faq", method="DELETE", data=data)
             st.json(response)
