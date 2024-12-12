@@ -14,7 +14,7 @@ def render():
                 contatos.append(contato)
                 setores.append(contato['setor'])
                 
-    option = st.selectbox("Escolha uma ação:", ["Ver Contatos", "Atualizar Contato", "Encerrar Conversa", "Adicionar Contato", "Remover Contato"])
+    option = st.selectbox("Escolha uma ação:", ["Ver Contatos", "Atualizar Contato", "Definir Disponibilidade", "Encerrar Conversa", "Adicionar Contato", "Remover Contato"])
     
     if option == "Ver Contatos":
         if st.button("Listar Contatos"):
@@ -24,6 +24,9 @@ def render():
                     # Converte a resposta em um DataFrame para exibir como tabela
                     df = pd.DataFrame(response)
                     df.reset_index(drop=True, inplace=True)
+                    # Mapeia os valores da coluna 'disponivel'
+                    if "disponivel" in df.columns:
+                        df["disponivel"] = df["disponivel"].map({1: "Indisponível", 0: "Disponível"})
                     st.dataframe(df,hide_index=True)  # Exibição como tabela interativa
                 else:
                     st.info("Nenhuma pessoa na fila.")
@@ -41,6 +44,15 @@ def render():
             response = call_api(f"/contatos", method="PUT", data=data)
             st.json(response)
 
+    elif option == "Definir Disponibilidade":
+        setor  = st.selectbox("Setor",setores)
+        disponibilidade = st.selectbox("Disponibilidade", ["Disponível", "Indisponível"])
+        disponibilidade = 1 if disponibilidade == "Indisponível" else 0
+        data = {'setor': setor, 'disp': disponibilidade}
+        if st.button("Definir Disponibilidade"):
+            response = call_api(f"/contatos/disp", method="PATCH", data=data)
+            st.json(response)
+
     elif option == "Encerrar Conversa":
         telefone_responsavel = st.text_input("Telefone do Responsável", placeholder='556298299370')
         data = {'numero': telefone_responsavel}
@@ -49,6 +61,7 @@ def render():
             st.json(response)
     
     elif option == "Adicionar Contato":
+        #TODO - Separar os campos dos subtópicos
         setor  = st.text_input("Setor")
         telefone_responsavel = st.text_input("Telefone do Responsável", placeholder='556298299370')
         nome_responsavel = st.text_input("Nome do Responsável")
