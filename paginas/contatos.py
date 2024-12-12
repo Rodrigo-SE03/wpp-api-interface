@@ -55,7 +55,7 @@ def render():
 
     elif option == "Encerrar Conversa":
         telefone_responsavel = st.text_input("Telefone do Responsável", placeholder='556298299370')
-        data = {'numero': telefone_responsavel}
+        data = {'telefone_responsavel': telefone_responsavel}
         if st.button("Encerrar Conversa"):
             response = call_api(f"/contatos", method="PATCH", data=data)
             st.json(response)
