@@ -1,5 +1,5 @@
 import streamlit as st
-import requests
+from time import sleep
 from urllib.parse import quote
 import pandas as pd
 from utils.api_client import call_api
@@ -21,7 +21,7 @@ def render():
                 else:
                     st.info("Nenhum chat encontrado.")
             else:
-                st.error("Erro ao buscar chats.")
+                st.warning("Nenhum chat encontrado.")
     
     elif option == "Listar Conversas":
         response = call_api("/history", method="GET")
@@ -32,26 +32,26 @@ def render():
                 # Itera sobre os arquivos para criar a tabela personalizada
                 for index, arquivo in enumerate(response):
                     col1, col2, col3 = st.columns([3, 1, 1])  # Define o layout das colunas
-                    arquivo = arquivo.replace("%", " ") 
-                    col1.write(arquivo)
-                    if col2.button("Baixar", key=f"baixar-{index}"):
-                        st.session_state["download"] = arquivo
-                        print('here')
-                        st.write(f"Baixando o arquivo: {arquivo}")
-                        arquivo_codificado = quote(arquivo) 
-                        download_url = call_api(f"/history/download/{arquivo_codificado}", method="GET")
-                        print(download_url)
-                        response = requests.get(download_url['url'])
-                        with open(arquivo, 'wb') as f:
-                            f.write(response.content)
-                        st.write("Download concluído.")
+                    arquivo_display = arquivo.replace("_", " ")
+                    col1.write(arquivo_display)
+                    if col2.download_button(
+                        label="Baixar",
+                        data=call_api(f"/history/{arquivo}", method="GET"),  # Obtém o conteúdo diretamente
+                        file_name=arquivo,  # Nome do arquivo para download
+                        mime="text/plain",  # Tipo MIME do arquivo
+                        key=f"baixar-{index}"
+                    ):
+                        st.success("Download concluído.")
 
                     if col3.button("Apagar", key=f"apagar-{index}"):
-                        st.write(f"Apagando o arquivo: {arquivo}")
+                        response = call_api(f"/history/{arquivo}", method="DELETE")
+                        st.error(f"Arquivo apagado: {arquivo}")
+                        sleep(1)
+                        st.rerun()
             else:
                 st.info("Nenhuma conversa encontrada.")
         else:
-            st.error("Erro ao buscar conversas.")
+            st.warning("Nenhuma conversa encontrada.")
                     
     
     elif option == "Remover Chat":

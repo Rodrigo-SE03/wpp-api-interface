@@ -19,7 +19,7 @@ def render():
                 else:
                     st.info("Nenhum item encontrado no FAQ.")
             else:
-                st.error("Erro ao buscar itens do FAQ.")
+                st.warning("Nenhum item encontrado no FAQ.")
     
     elif option == "Adicionar Item":
         pergunta = st.text_input("Pergunta")

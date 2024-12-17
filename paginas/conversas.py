@@ -19,7 +19,7 @@ def render():
                 else:
                     st.info("Nenhuma conversa encontrada.")
             else:
-                st.error("Erro ao buscar conversas.")
+                st.warning("Nenhuma conversa encontrada.")
     
     elif option == "Remover Conversa":
         faq_id = st.text_input("ID da Conversa")
