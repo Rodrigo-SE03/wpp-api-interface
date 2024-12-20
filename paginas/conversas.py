@@ -3,7 +3,7 @@ import pandas as pd
 from utils.api_client import call_api
 
 def render():
-    st.title("Conversas")
+    st.title("Conversas com Colaboradores")
 
     option = st.selectbox("Escolha uma ação:", ["Ver Conversas", "Remover Conversa"])
     

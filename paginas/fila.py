@@ -19,7 +19,7 @@ def render():
                 else:
                     st.info("Nenhuma pessoa na fila.")
             else:
-                st.error("Erro ao ver a fila.")
+                st.warning("Nenhuma pessoa na fila.")
     
     elif option == "Remover da Fila":
         numero = st.text_input("Número de Telefone",placeholder='556298299370')

@@ -1,8 +1,30 @@
 import streamlit as st
 from utils.api_client import call_api
+from dotenv import load_dotenv
+import os
+
+load_dotenv(override=True)
+SENHA = os.getenv("SENHA")
 
 # Configuração inicial
 st.set_page_config(page_title="Gerenciador de API", layout="wide",initial_sidebar_state="collapsed")
+
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+
+# Exibir popup de autenticação
+if not st.session_state.authenticated:
+    with st.modal("Autenticação", closable=False):
+        st.write("Por favor, insira a senha para acessar o app.")
+        senha = st.text_input("Senha", type="password", key="password")
+
+        if st.button("Entrar"):
+            if senha == SENHA:
+                st.session_state.authenticated = True
+                st.success("Acesso liberado!")
+                st.experimental_rerun()  # Recarrega a página
+            else:
+                st.error("Senha incorreta.")
 
 # Função para verificar conversas ativas
 def verificar_conversas_ativas():
