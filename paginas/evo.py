@@ -1,8 +1,20 @@
 import streamlit as st
 from time import sleep
-from urllib.parse import quote
+from datetime import datetime
 import pandas as pd
 from utils.api_client import call_api
+import zipfile
+import io
+
+def extrair_data(arquivo):
+    try:
+        # Divide o nome pelos underscores e extrai a parte correspondente à data e hora
+        partes = arquivo.split("_")
+        data_hora_str = partes[-2] + " " + partes[-1].replace(".txt", "")  # Junta data e hora e remove a extensão
+        return datetime.strptime(data_hora_str, "%Y-%m-%d %H-%M-%S")  # Novo formato com hífens e traços
+    except Exception as e:
+        st.warning(f"Erro ao extrair data de {arquivo}: {e}")
+        return datetime.min 
 
 def render():
     st.title("EVO")
@@ -27,6 +39,7 @@ def render():
         response = call_api("/history", method="GET")
         if response and isinstance(response, list):
             if len(response) > 0:
+                response.sort(key=extrair_data, reverse=True) # Ordena os arquivos por data
                 st.write("Lista de Arquivos:")
                 
                 # Itera sobre os arquivos para criar a tabela personalizada
@@ -43,7 +56,7 @@ def render():
                     ):
                         st.success("Download concluído.")
 
-                    if col3.button("Apagar", key=f"apagar-{index}"):
+                    if col3.button("Apagar", key=f"apagar-{index}",type="primary"):
                         response = call_api(f"/history/{arquivo}", method="DELETE")
                         st.error(f"Arquivo apagado: {arquivo}")
                         sleep(1)
@@ -52,6 +65,55 @@ def render():
                 st.info("Nenhuma conversa encontrada.")
         else:
             st.warning("Nenhuma conversa encontrada.")
+
+        st.markdown("<hr>", unsafe_allow_html=True)
+        # Botões para ações gerais
+        col1, col2, col3 = st.columns([1, 1, 1])
+
+        # Botão para baixar todos os arquivos
+        with col1:
+            if st.button("Baixar Todos os Arquivos", type="secondary"):
+                # Cria um arquivo ZIP com todos os arquivos
+                zip_buffer = io.BytesIO()
+                with zipfile.ZipFile(zip_buffer, "w") as zip_file:
+                    for arquivo in response:
+                        file_data = call_api(f"/history/{arquivo}", method="GET")  # Obtém o conteúdo de cada arquivo
+                        zip_file.writestr(arquivo, file_data)  # Adiciona ao ZIP
+                zip_buffer.seek(0)
+                
+                # Exibe o botão para download do ZIP
+                st.download_button(
+                    label="Clique aqui para baixar o ZIP",
+                    data=zip_buffer,
+                    file_name="todos_arquivos.zip",
+                    mime="application/zip",
+                )
+
+        # Botão para apagar todos os arquivos
+        with col3:
+            if not st.session_state.get("confirmar_apagar_tudo", False):
+                if st.button("Apagar Todos os Arquivos", type="primary"):
+                    st.session_state.confirmar_apagar_tudo = True
+
+            if st.session_state.get("confirmar_apagar_tudo", False):
+                st.warning("Tem certeza de que deseja apagar TODOS os arquivos? Esta ação não pode ser desfeita.")
+                
+                col_confirmar, col_cancelar = st.columns(2)
+                with col_confirmar:
+                    if st.button("Sim, apagar tudo", key="confirmar_apagar"):
+                        # Chama a rota para apagar todos os arquivos
+                        response = call_api("/history", method="DELETE")
+                        if response:  # Verifica se a resposta é bem-sucedida
+                            st.success("Todos os arquivos foram apagados com sucesso!")
+                            st.session_state.confirmar_apagar_tudo = False
+                            sleep(1)
+                            st.rerun()
+                        else:
+                            st.error("Ocorreu um erro ao apagar os arquivos.")
+                with col_cancelar:
+                    if st.button("Não, cancelar", key="cancelar_apagar"):
+                        st.session_state.confirmar_apagar_tudo = False
+                        st.info("Ação cancelada.")
                     
     
     elif option == "Remover Chat":
