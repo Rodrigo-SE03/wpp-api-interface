@@ -4,7 +4,18 @@ from utils.api_client import call_api
 
 def render():
     st.title("Contatos")
-
+    with st.expander("Sobre esta página:"):
+        st.write("""
+            Esta seção está relacionada ao gerenciamento dos contatos dos responsáveis pelos diferentes setores de comunicação disponíveis no canal do WhatsApp.
+            \n\n
+            Funções disponíveis:
+            - Ver Contatos: Lista todos os contatos cadastrados, seus setores e mostra se estão em conversa com algum cliente.
+            - Atualizar Contato: Atualiza as informações de um contato existente.
+            - Definir Disponibilidade: Define a disponibilidade de um contato para atendimento.
+            - Encerrar Conversa: Encerra a conversa com um cliente forçadamente. Usado para casos de eventuais problemas técnicos.
+            - Adicionar Contato: Adiciona um novo contato.
+            - Remover Contato: Remove um contato existente.
+        """)
     response = call_api("/contatos", method="GET")
     contatos = []
     setores = []

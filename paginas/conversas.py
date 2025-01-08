@@ -4,7 +4,15 @@ from utils.api_client import call_api
 
 def render():
     st.title("Conversas com Colaboradores")
-
+    with st.expander("Sobre esta página:"):
+        st.write("""
+            Esta seção está relacionada às conversas dos clientes com os responsáveis pelos setores listados na área de contatos.\n
+            Aqui é possível observar a data e propósito das conversas.
+            \n\n
+            Funções disponíveis:
+            - Ver Conversas: Lista todas as conversas cadastradas.
+            - Remover Conversa: Remove o registro de uma conversa.
+        """)
     option = st.selectbox("Escolha uma ação:", ["Ver Conversas", "Remover Conversa"])
     
     if option == "Ver Conversas":

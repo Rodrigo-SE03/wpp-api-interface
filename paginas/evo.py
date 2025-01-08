@@ -18,7 +18,16 @@ def extrair_data(arquivo):
 
 def render():
     st.title("EVO")
-
+    with st.expander("Sobre esta página:"):
+        st.write("""
+            Esta seção está relacionada à leitura das conversas da EVO com clientes pelo WhatsApp.\n
+            Aqui é possível verificar as conversas em andamento e fazer o download das conversas anteriores.\n
+            \n\n
+            Funções disponíveis:
+            - Ver Chats: Lista todos os chats cadastrados. Se o "status" do chat for igual a 0, significa que a conversa está em andamento naquele instante.
+            - Listar Conversas: Exibe os arquivos das conversas realizadas no formato .txt.
+            - Remover Chat: Remove o registro de uma conversa.
+        """)
     option = st.selectbox("Escolha uma ação:", ["Ver Chats", "Listar Conversas", "Remover Chat"])
     
     if option == "Ver Chats":

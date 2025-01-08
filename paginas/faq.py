@@ -4,7 +4,16 @@ from utils.api_client import call_api
 
 def render():
     st.title("FAQ")
-
+    with st.expander("Sobre esta página:"):
+        st.write("""
+            Esta seção está relacionada ao gerenciamento do FAQ (perguntas  frequentes).\n
+            O FAQ se divide em perguntas sobre geração de energia e sobre mercado livre de energia.
+            \n\n
+            Funções disponíveis:
+            - Ver Itens: Lista todas as perguntas e respostas cadastradas.
+            - Adicionar Item: Adiciona uma nova pergunta e resposta.
+            - Remover Item: Remove uma pergunta e resposta existente.
+        """)
     option = st.selectbox("Escolha uma ação:", ["Ver Itens", "Adicionar Item", "Remover Item"])
     
     if option == "Ver Itens":

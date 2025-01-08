@@ -49,7 +49,7 @@ if st.session_state.authenticated:
     # Sidebar para navegação
     menu = st.sidebar.selectbox(
         "Selecione a seção",
-        ["Contatos", "FAQ", "EVO", "Conversas", "Fila"],
+        ["Contatos", "FAQ", "EVO", "Eventos", "Conversas", "Fila"],
         index=0
     )
 
@@ -69,3 +69,6 @@ if st.session_state.authenticated:
     elif menu == "Fila":
         from paginas import fila
         fila.render()
+    elif menu == "Eventos":
+        from paginas import eventos
+        eventos.render()
