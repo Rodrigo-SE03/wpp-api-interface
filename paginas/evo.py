@@ -21,7 +21,8 @@ def render():
     with st.expander("Sobre esta página:"):
         st.write("""
             Esta seção está relacionada à leitura das conversas da EVO com clientes pelo WhatsApp.\n
-            Aqui é possível verificar as conversas em andamento e fazer o download das conversas anteriores.\n
+            Aqui é possível verificar as conversas em andamento e fazer o download das conversas do mês atual.\n
+            As conversas dos meses anteriores estarão disponíveis para download na pasta do Google Drive: https://drive.google.com/drive/folders/16CexjYXLVNtOmJK_xrLmcjTinPOH3a60?usp=drive_link.\n
             \n\n
             Funções disponíveis:
             - Ver Chats: Lista todos os chats cadastrados. Se o "status" do chat for igual a 0, significa que a conversa está em andamento naquele instante.
