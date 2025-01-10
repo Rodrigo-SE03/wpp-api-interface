@@ -10,8 +10,10 @@ def render():
             Para integrar o chatbot à automação, é necessário configurar um evento por aqui, definindo o nome do evento e a mensagem a ser enviada.\n
             O modelo da mensagem deve ser configurado através da plataforma da Meta, e o nome da mensagem deve ser informado aqui.\n
             Após feitas as configurações, é necessário inserir no fluxo de automação do RD Station o bloco "Enviar Leads para Integração" com a url "http://engtec.pythonanywhere.com/rd/leads/{nome-do-evento}".\n
-            O nome do evento não deve possuir espaços, letras maiúsculas ou caracteres especiais.\n
-            É recomendável fazer um teste da integração de uma nova mensagem antes de ativar a automação para os cliente. Para isso, basta limitar os leads a contatos internos da empresa e verificar o funcionamento do envio.
+            O nome do evento não deve possuir espaços, letras maiúsculas ou caracteres especiais (para espaço entre palavras use "-").\n
+            É recomendável fazer um teste da integração de uma nova mensagem antes de ativar a automação para os cliente. Para isso, basta limitar os leads a contatos internos da empresa e verificar o funcionamento do envio.\n
+            É recomendável não inserir a variável de nome do cliente no cabeçalho da mensagem.\n
+            O limite de caracteres do corpo da mensagem é de 1024 caso haja outros componentes (cabeçalho ou botões) e de 32768 caso seja só o corpo.
             \n\n
             Funções disponíveis:
             - Ver Eventos: Lista todos os eventos cadastrados.    
