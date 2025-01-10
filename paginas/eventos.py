@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from utils.api_client import call_api
+from utils.api_client import call_api,get_templates
 
 def render():
     st.title("Eventos")
@@ -10,7 +10,8 @@ def render():
             Para integrar o chatbot à automação, é necessário configurar um evento por aqui, definindo o nome do evento e a mensagem a ser enviada.\n
             O modelo da mensagem deve ser configurado através da plataforma da Meta, e o nome da mensagem deve ser informado aqui.\n
             Após feitas as configurações, é necessário inserir no fluxo de automação do RD Station o bloco "Enviar Leads para Integração" com a url "http://engtec.pythonanywhere.com/rd/leads/{nome-do-evento}".\n
-            O nome do evento não deve possuir espaços, letras maiúsculas ou caracteres especiais.
+            O nome do evento não deve possuir espaços, letras maiúsculas ou caracteres especiais.\n
+            É recomendável fazer um teste da integração de uma nova mensagem antes de ativar a automação para os cliente. Para isso, basta limitar os leads a contatos internos da empresa e verificar o funcionamento do envio.
             \n\n
             Funções disponíveis:
             - Ver Eventos: Lista todos os eventos cadastrados.    
@@ -39,10 +40,10 @@ def render():
     
     elif option == "Adicionar Evento":
         evento = st.text_input("Nome do evento (não deve conter caracteres especiais)")
-        mensagem = st.text_input("Nome da mensagem (mesmo nome cadastrado no Meta)")
-        variavel = st.selectbox("Nome do cliente (em que lugar da mensagem será inserido o nome do cliente)", ["Cabeçalho","Corpo","Nenhuma"])
+        message_names = [template['name'] for template in get_templates()]
+        mensagem = st.selectbox("Mensagem (retirada do Meta Business Manager)", message_names)
         if st.button("Adicionar Evento"):
-            data = {"evento": evento, "mensagem": mensagem, "variavel": variavel}
+            data = {"evento": evento, "mensagem": mensagem}
             response = call_api("/eventos", method="POST", data=data)
             st.json(response)
     
